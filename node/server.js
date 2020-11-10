@@ -23,8 +23,11 @@ scan([process.env.DATA_PATH]).then((res) => {
     log(`${store.get("files").length} files loaded`);
     let files = store.get("files");
 
+    let counter = 1;
     files.forEach(async function (file) {
         const entry = await File.create({ path: file.path, hash: file.hash });
         console.log(`file: ${file.path} - hash: ${file.hash}`);
+        if (counter % 500 == 0) log(counter, 0);
+        counter++;
     });
 });
