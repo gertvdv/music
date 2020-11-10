@@ -2,6 +2,7 @@ const path = require("path");
 const fs = require("fs");
 const store = require("./store");
 const { log } = require("./log");
+const crypto = require("crypto");
 
 let total_scanned = 0;
 let start_time = 0;
@@ -52,7 +53,7 @@ function walk(dir, done) {
             var file = list[i++];
             if (!file) return done(null, results);
             file = path.resolve(dir, file);
-            fs.stat(file, function(err, stat) {
+            fs.stat(file, async function(err, stat) {
                 if (stat && stat.isDirectory()) {
                     if (file.match(/recycle|node_modules|\.git$/i)) {
                         console.log(`Skipping ${file}`);
@@ -73,15 +74,32 @@ function walk(dir, done) {
                             (hrend / 1000)} files per second`
                     );
                     if (exts.includes(path.extname(file).toLowerCase())) {
-                        results.push(file);
-                        let current_files = store.get("files") || [];
-                        current_files.push(file);
-                        store.set("files", current_files);
+                        let hash = await getChecksum(file);
+                        results.push({ path: file, hash: hash });
                         total_files_found++;
                     }
                     next();
                 }
             });
         })();
+    });
+}
+
+function getChecksum(path) {
+    return new Promise(function(resolve, reject) {
+        // crypto.createHash('sha1');
+        // crypto.createHash('sha256');
+        const hash = crypto.createHash("md5");
+        const input = fs.createReadStream(path);
+
+        input.on("error", reject);
+
+        input.on("data", function(chunk) {
+            hash.update(chunk);
+        });
+
+        input.on("close", function() {
+            resolve(hash.digest("hex"));
+        });
     });
 }

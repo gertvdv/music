@@ -1,5 +1,6 @@
 const dotenv = require("dotenv").config();
 const express = require("express");
+const { File } = require("./sequelize");
 const { scan } = require("./scan");
 const store = require("./store");
 const { log } = require("./log");
@@ -20,5 +21,10 @@ scan([process.env.DATA_PATH]).then((res) => {
     store.set("files", res);
     store.set("scan_status", "complete");
     log(`${store.get("files").length} files loaded`);
-    log(store.get("files"));
+    let files = store.get("files");
+
+    files.forEach(async function (file) {
+        const entry = await File.create({ path: file.path, hash: file.hash });
+        console.log(`file: ${file.path} - hash: ${file.hash}`);
+    });
 });

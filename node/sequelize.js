@@ -11,7 +11,8 @@ var File = FileModel(sequelize, Sequelize);
 sequelize
     .authenticate()
     .then(() => {
-        console.log("Success!");
+        console.log(`Successfully connected to ${process.env.DB_PATH}`);
+        File.sync();
     })
     .catch(err => {
         console.log(err);
