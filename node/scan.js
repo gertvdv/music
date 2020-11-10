@@ -76,6 +76,8 @@ function walk(dir, done) {
                     if (exts.includes(path.extname(file).toLowerCase())) {
                         let hash = await getChecksum(file);
                         results.push({ path: file, hash: hash });
+                        if (total_files_found % 500 == 0)
+                            log(`${total_files_found} files scanned so far`, 0);
                         total_files_found++;
                     }
                     next();
