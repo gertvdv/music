@@ -28,6 +28,7 @@ scan([process.env.DATA_PATH]).then((res) => {
         const entry = await File.create({ path: file.path, hash: file.hash });
         console.log(`file: ${file.path} - hash: ${file.hash}`);
         if (counter % 500 == 0) log(counter, 0);
+        if (counter == files.length) log("I think we are done");
         counter++;
     });
 });
