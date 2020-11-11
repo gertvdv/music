@@ -9,7 +9,9 @@
 
         <ul class="py-5">
             @foreach ($files as $file)
-                <li class="w-full p-3 bg-white border-b-1 border-gray-4s00 mb-1">{{ $file->path }}</li>
+                <li class="w-full p-3 bg-white border-b-1 border-gray-4s00 mb-1"><a
+                        href="http://localhost:3000/file/?filepath={{ $file->path }}"
+                        target="_blank">{{ $file->path }}</a></li>
             @endforeach
         </ul>
     </div>
